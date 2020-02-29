@@ -1,0 +1,8 @@
+{
+  "name": "@aripjanov/rematch-plugins",
+  "version": "0.0.1",
+  "description": "Rematch plugins",
+  "private": true,
+  "author": "Aripjanov Sherzod <aripjanov.sh@gmail.com>",
+  "license": "MIT"
+}
