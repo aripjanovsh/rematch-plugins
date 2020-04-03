@@ -1,7 +1,7 @@
 ## Rematch async effect plugin for fetch reducers
 
 
-##Setup
+### Setup
 ```javascript
 import { init } from "@rematch/core";
 import { createAsyncEffectPlugin } from '@aripjanov/rematch-plugins';
@@ -22,7 +22,7 @@ init({
 ```
 
 
-##Fetch effect with plugin
+### Fetch effect with plugin
 ```javascript
 import {initialAsyncState} from "@aripjanov/rematch-plugins";
 
@@ -61,7 +61,7 @@ const UserModel = {
 ```
 
 
-##Compare with Rematch effect
+### Compare with Rematch effect
 
 ```javascript
 const UserModel = {
@@ -98,5 +98,5 @@ const UserModel = {
 
 ```
 
-##Compare with clear redux
+### Compare with clear redux
 sorry I'm too lazy to write
