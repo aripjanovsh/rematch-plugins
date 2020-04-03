@@ -7,7 +7,7 @@ const createFulfilledReducer = key => (state, payload) => ({
   [key]: { isFetching: false, payload, errors: null }
 });
 
-const createRejectReducer = key => (state, action, payload) => ({
+const createRejectReducer = key => (state, payload) => ({
   ...state,
   [key]: { isFetching: false, payload: null, errors: payload }
 });
@@ -34,7 +34,8 @@ export const createAsyncEffectPlugin = pluginConfig => ({
         ? model.asyncEffects(this.dispatch)
         : model.asyncEffects;
 
-    const cntModelReducers = this.config.models[model.name].reducers;
+    let cntModelReducers = this.config.models[model.name].reducers;
+    if(!cntModelReducers) cntModelReducers = {};
 
     for (const asyncEffectName of Object.keys(asyncEffects)) {
       this.validate([
@@ -75,22 +76,24 @@ export const createAsyncEffectPlugin = pluginConfig => ({
 
       this.asyncEffects[`${model.name}/${fetchCallName}`] = asyncEffects[
         asyncEffectName
-      ].bind(this.dispatch[model.name]);
+        ].bind(this.dispatch[model.name]);
       this.dispatch[model.name][asyncEffectName].isEffect = true;
     }
   },
   middleware(store) {
     return next => async action => {
       const { type, payload: actionPayload } = action;
-      if (action.type in this.asyncEffects) {
+      if (type in this.asyncEffects) {
         const asyncEffect = this.asyncEffects[type];
-
+        store.dispatch({ type: `${type}Perform` });
         try {
-          store.dispatch({ type: `${type}Perform` });
           const payload = await asyncEffect(actionPayload, store);
           store.dispatch({ type: `${type}Fulfill`, payload });
-        } catch (e) {
-          store.dispatch({ type: `${type}Fulfill`, payload: e });
+        } catch (error) {
+          const payload = pluginConfig.normalizeError
+            ? pluginConfig.normalizeError(error)
+            : error;
+          store.dispatch({ type: `${type}Reject`, payload });
         }
         return;
       }
